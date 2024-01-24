@@ -1,0 +1,7 @@
+D:\AsmBook 8\irvine\examples\Project64_VS2022\x64\Debug\Project.exe
+C:\Users\Amna Sarwar\Downloads\Project64_VS2022\Project64_VS2022\x64\Debug\Project.exe
+C:\Users\Amna Sarwar\Downloads\Project64_VS2022\first practice\Project64_VS2022\x64\Debug\Project.exe
+C:\Users\Student\Desktop\first practice\Project64_VS2022\x64\Debug\Project.exe
+C:\Users\Administrator\OneDrive\Desktop\first practice\Project64_VS2022\x64\Debug\Project.exe
+F:\first practice\Project64_VS2022\x64\Debug\Project.exe
+C:\OneDrive\Documents\first practice\Project64_VS2022\x64\Debug\Project.exe

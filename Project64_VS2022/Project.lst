@@ -1,0 +1,901 @@
+Microsoft (R) Macro Assembler (x64) Version 14.37.32825.0   01/24/24 08:24:14
+AddTwoSum_64.asm					     Page 1 - 1
+
+
+				ExitProcess proto
+				WriteString proto
+				ReadInt64 proto
+				ReadString proto
+				WriteInt64 proto
+				Crlf proto
+
+ 00000000			.data
+ 00000000 20 20 20 20 20	UserNamePrompt db "                 Enter User Name: ",0
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 45 6E 74
+	   65 72 20 55 73
+	   65 72 20 4E 61
+	   6D 65 3A 20 00
+ 00000023 20 20 20 20 20	PasswordPrompt db "                 Enter password for Login: ", 0
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 45 6E 74
+	   65 72 20 70 61
+	   73 73 77 6F 72
+	   64 20 66 6F 72
+	   20 4C 6F 67 69
+	   6E 3A 20 00
+ 0000004F 49 6E 76 61 6C	    InvalidPasswordPrompt db "Invalid password. Exiting.", 0
+	   69 64 20 70 61
+	   73 73 77 6F 72
+	   64 2E 20 45 78
+	   69 74 69 6E 67
+	   2E 00
+ 0000006A 4C 6F 67 69 6E	    SuccessPrompt db "Login successful.", 0
+	   20 73 75 63 63
+	   65 73 73 66 75
+	   6C 2E 00
+ 0000007C 2A 2A 2A 2A 2A	    String1 db "******************   'Welcome to BISTRO'   *****************", 0
+	   2A 2A 2A 2A 2A
+	   2A 2A 2A 2A 2A
+	   2A 2A 2A 20 20
+	   20 27 57 65 6C
+	   63 6F 6D 65 20
+	   74 6F 20 42 49
+	   53 54 52 4F 27
+	   20 20 20 2A 2A
+	   2A 2A 2A 2A 2A
+	   2A 2A 2A 2A 2A
+	   2A 2A 2A 2A 2A
+	   00
+ 000000B9 31 2E 20 50 72	    String2 db "1. Press to order food.", 0
+	   65 73 73 20 74
+	   6F 20 6F 72 64
+	   65 72 20 66 6F
+	   6F 64 2E 00
+ 000000D1 32 2E 20 50 72	    String3 db "2. Press to cancel.", 0
+	   65 73 73 20 74
+	   6F 20 63 61 6E
+	   63 65 6C 2E 00
+ 000000E5 50 6C 65 61 73	    StringInvalid db "Please Enter Correct Choice ",0
+	   65 20 45 6E 74
+	   65 72 20 43 6F
+	   72 72 65 63 74
+	   20 43 68 6F 69
+	   63 65 20 00
+ 00000102 57 68 61 74 20	    String6 db "What would you like to order?", 0
+	   77 6F 75 6C 64
+	   20 79 6F 75 20
+	   6C 69 6B 65 20
+	   74 6F 20 6F 72
+	   64 65 72 3F 00
+ 00000120 31 29 20 50 69	    String7 db "1) Pizzas", 0
+	   7A 7A 61 73 00
+ 0000012A 32 29 20 42 75	    String8 db "2) Burgers", 0
+	   72 67 65 72 73
+	   00
+ 00000135 33 29 20 53 61	    String9 db "3) Sandwiches", 0
+	   6E 64 77 69 63
+	   68 65 73 00
+ 00000143 34 29 20 42 69	    String10 db "4) Biryani", 0
+	   72 79 61 6E 69
+	   00
+
+ 0000014E 53 65 6C 65 63	    PizzaFlavorPrompt db "Select Pizza Flavor:", 0
+	   74 20 50 69 7A
+	   7A 61 20 46 6C
+	   61 76 6F 72 3A
+	   00
+ 00000163 31 29 20 4D 61	    String12 db "1) Margherita", 0
+	   72 67 68 65 72
+	   69 74 61 00
+ 00000171 32 29 20 50 65	    String13 db "2) Pepperoni", 0
+	   70 70 65 72 6F
+	   6E 69 00
+ 0000017E 33 29 20 56 65	    String14 db "3) Veggie Supreme", 0
+	   67 67 69 65 20
+	   53 75 70 72 65
+	   6D 65 00
+
+ 00000190 53 65 6C 65 63	    PizzaSizePrompt db "Select Pizza Size:", 0
+	   74 20 50 69 7A
+	   7A 61 20 53 69
+	   7A 65 3A 00
+ 000001A3 31 29 20 53 6D	    String15 db "1) Small", 0
+	   61 6C 6C 00
+ 000001AC 32 29 20 4D 65	    String16 db "2) Medium", 0
+	   64 69 75 6D 00
+ 000001B6 33 29 20 4C 61	    String17 db "3) Large", 0
+	   72 67 65 00
+
+ 000001BF 53 65 6C 65 63	    StringFlavorBPrompt db "Select flavor:", 0
+	   74 20 66 6C 61
+	   76 6F 72 3A 00
+ 000001CE 31 29 20 43 68	    Stringc db "1) Cheese", 0
+	   65 65 73 65 00
+ 000001D8 32 29 20 42 42	    Stringb db "2) BBQ", 0
+	   51 00
+ 000001DF 53 65 6C 65 63	    StringSizeBPrompt db "Select size:", 0
+	   74 20 73 69 7A
+	   65 3A 00
+ 000001EC 31 29 20 52 65	    Stringreg db "1) Regular", 0
+	   67 75 6C 61 72
+	   00
+ 000001F7 32 29 20 4C 61	    Stringlar db "2) Large", 0
+	   72 67 65 00
+
+ 00000200 53 65 6C 65 63	    StringFlavorBRPrompt db "Select flavor:", 0
+	   74 20 66 6C 61
+	   76 6F 72 3A 00
+ 0000020F 31 29 20 43 68	    Stringch db "1) Chicken", 0
+	   69 63 6B 65 6E
+	   00
+ 0000021A 32 29 20 53 69	    Stringsi db "2) Simple", 0
+	   6D 70 6C 65 00
+ 00000224 53 65 6C 65 63	    StringSizeBRPrompt db "Select size:", 0
+	   74 20 73 69 7A
+	   65 3A 00
+ 00000231 31 29 20 53 69	    Stringsin db "1) Single", 0
+	   6E 67 6C 65 00
+ 0000023B 32 29 20 44 6F	    Stringdou db "2) Double", 0
+	   75 62 6C 65 00
+
+ 00000245 31 29 20 56 65	     StringSandwichFlavors db "1) Veggie Delight", 0
+	   67 67 69 65 20
+	   44 65 6C 69 67
+	   68 74 00
+ 00000257 53 65 6C 65 63	    StringSandwichSizes db "Select size for Sandwich:", 0
+	   74 20 73 69 7A
+	   65 20 66 6F 72
+	   20 53 61 6E 64
+	   77 69 63 68 3A
+	   00
+ 00000271 31 29 20 53 6D	    StringSandwichSmall db "1) Small", 0
+	   61 6C 6C 00
+ 0000027A 32 29 20 4D 65	     StringSandwichMedium db "2) Medium", 0
+	   64 69 75 6D 00
+ 00000284 33 29 20 4C 61	     StringSandwichLarge   db "3) Large", 0
+	   72 67 65 00
+ 0000028D 49 6E 76 61 6C	    StringSandwichInvalidSize db "Invalid size selection. Please try again.", 0
+	   69 64 20 73 69
+	   7A 65 20 73 65
+	   6C 65 63 74 69
+	   6F 6E 2E 20 50
+	   6C 65 61 73 65
+	   20 74 72 79 20
+	   61 67 61 69 6E
+	   2E 00
+
+ 000002B7 45 6E 74 65 72	    StringQuantity db "Enter quantity:", 0
+	   20 71 75 61 6E
+	   74 69 74 79 3A
+	   00
+ 000002C7 2D 2D 2D 2D 2D	    String27 db "--------Your Order is Verified---------", 0
+	   2D 2D 2D 59 6F
+	   75 72 20 4F 72
+	   64 65 72 20 69
+	   73 20 56 65 72
+	   69 66 69 65 64
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 00
+ 000002EF 59 6F 75 72 20	    StringBill db "Your Total Bill is: ", 0
+	   54 6F 74 61 6C
+	   20 42 69 6C 6C
+	   20 69 73 3A 20
+	   00
+ 00000304 59 6F 75 72 20	    StringTime db "Your Order Will be delivered in 25 Minutes", 0
+	   4F 72 64 65 72
+	   20 57 69 6C 6C
+	   20 62 65 20 64
+	   65 6C 69 76 65
+	   72 65 64 20 69
+	   6E 20 32 35 20
+	   4D 69 6E 75 74
+	   65 73 00
+ 0000032F 54 68 61 6E 6B	    Thanks db "Thank you For Ordering From Bistro", 0
+	   20 79 6F 75 20
+	   46 6F 72 20 4F
+	   72 64 65 72 69
+	   6E 67 20 46 72
+	   6F 6D 20 42 69
+	   73 74 72 6F 00
+
+ 00000352 20 20 20 50 72	    StringRecalculate db "   Press 1 to Recalculate.   ", 0
+	   65 73 73 20 31
+	   20 74 6F 20 52
+	   65 63 61 6C 63
+	   75 6C 61 74 65
+	   2E 20 20 20 00
+ 00000370 20 20 20 50 72	StringExit db "   Press 2 to EXIT.   ", 0
+	   65 73 73 20 32
+	   20 74 6F 20 45
+	   58 49 54 2E 20
+	   20 20 00
+ 00000387			    pass dq ?
+	   0000000000000000
+				    name dq ?
+ 0000038F			    num dq ?
+	   0000000000000000
+ 00000397			    quan dq ?
+	   0000000000000000
+ 0000039F			    res dq ?
+	   0000000000000000
+ 00000000			.code
+ 00000000			main proc
+ 00000000  E8 00000000 E	call crlf 
+ 00000005  E8 00000000 E	call crlf
+ 0000000A  48/ BA		mov rdx, offset UserNamePrompt
+	   0000000000000000 R
+ 00000014  E8 00000000 E	    call WriteString
+ 00000019  48/ C7 C1		    mov rcx, 10
+	   0000000A
+ 00000020  E8 00000000 E	    call readstring
+				; Ask for password
+ 00000025  48/ BA		    mov rdx, offset PasswordPrompt
+	   0000000000000023 R
+ 0000002F  E8 00000000 E	    call WriteString
+ 00000034  48/ C7 C0		    mov rax, 0
+	   00000000
+ 0000003B  E8 00000000 E	    call ReadInt64
+ 00000040  48/ 89 05		    mov pass, rax
+	   00000387 R
+
+ 00000047  48/ 3D		    cmp rax, 12345
+	   00003039
+ 0000004D  74 05		    je Successful
+ 0000004F  E9 00000641		    jmp invalid_login
+
+ 00000054			    Successful:
+
+ 00000054  E8 00000000 E	     call crlf
+ 00000059  48/ BA		     mov rdx, offset SuccessPrompt
+	   000000000000006A R
+ 00000063  E8 00000000 E	    call WriteString
+ 00000068  E8 00000000 E	     call crlf
+ 0000006D			     main1:
+ 0000006D  E8 00000000 E	     call crlf
+ 00000072  48/ BA		     mov rdx, offset String1
+	   000000000000007C R
+ 0000007C  E8 00000000 E	    call WriteString
+ 00000081  E8 00000000 E	    call crlf
+ 00000086  48/ BA		    mov rdx, offset String2
+	   00000000000000B9 R
+ 00000090  E8 00000000 E	    call WriteString
+ 00000095  E8 00000000 E	    call crlf
+ 0000009A  48/ BA		    mov rdx, offset String3
+	   00000000000000D1 R
+ 000000A4  E8 00000000 E	    call WriteString
+ 000000A9  E8 00000000 E	    call crlf
+
+ 000000AE  48/ C7 C0		    mov rax, 0
+	   00000000
+ 000000B5  E8 00000000 E	    call ReadInt64
+ 000000BA  48/ 89 05		    mov num, rax
+	   0000038F R
+
+ 000000C1  48/ 83 F8 01		    cmp rax, 1
+ 000000C5  74 2C		    je main2
+ 000000C7  48/ 83 F8 02		    cmp rax, 2
+ 000000CB  0F 84 000005DA	    je exit_program
+ 000000D1  48/ 3B 05		      cmp rax, num
+	   0000038F R
+ 000000D8  74 00		    je Invalid
+
+ 000000DA			    Invalid:
+ 000000DA  48/ BA		     mov rdx, offset StringInvalid
+	   00000000000000E5 R
+ 000000E4  E8 00000000 E	    call WriteString
+ 000000E9  E8 00000000 E	    call crlf
+ 000000EE  E9 FFFFFF7A		    jmp main1
+				    
+ 000000F3			    main2:
+ 000000F3  48/ BA		     mov rdx, offset String6
+	   0000000000000102 R
+ 000000FD  E8 00000000 E	    call WriteString
+ 00000102  E8 00000000 E	    call crlf
+ 00000107  48/ BA		    mov rdx, offset String7
+	   0000000000000120 R
+ 00000111  E8 00000000 E	    call WriteString
+ 00000116  E8 00000000 E	    call crlf
+ 0000011B  48/ BA		    mov rdx, offset String8
+	   000000000000012A R
+ 00000125  E8 00000000 E	    call WriteString
+ 0000012A  E8 00000000 E	    call crlf
+ 0000012F  48/ BA		    mov rdx, offset String9
+	   0000000000000135 R
+ 00000139  E8 00000000 E	    call WriteString
+ 0000013E  E8 00000000 E	    call crlf
+ 00000143  48/ BA		    mov rdx, offset String10
+	   0000000000000143 R
+ 0000014D  E8 00000000 E	    call WriteString
+ 00000152  E8 00000000 E	    call crlf
+				  
+
+ 00000157  48/ C7 C0		    mov rax, 0
+	   00000000
+ 0000015E  E8 00000000 E	    call ReadInt64
+
+ 00000163  48/ 83 F8 01		    cmp rax, 1
+ 00000167  74 1E		    je Pizzas
+ 00000169  48/ 83 F8 02		    cmp rax, 2
+ 0000016D  0F 84 00000164	    je Burgers
+ 00000173  48/ 83 F8 03		    cmp rax, 3
+ 00000177  0F 84 00000259	    je Sandwiches
+ 0000017D  48/ 83 F8 04		    cmp rax, 4
+ 00000181  0F 84 00000358	    je Biryani
+
+ 00000187			    Pizzas:
+ 00000187  48/ C7 C0		    mov rax, 0
+	   00000000
+ 0000018E  48/ BA		    mov rdx, offset PizzaFlavorPrompt
+	   000000000000014E R
+ 00000198  E8 00000000 E	    call WriteString
+ 0000019D  E8 00000000 E	    call crlf
+ 000001A2  48/ BA		    mov rdx, offset String12
+	   0000000000000163 R
+ 000001AC  E8 00000000 E	    call WriteString
+ 000001B1  E8 00000000 E	    call crlf
+ 000001B6  48/ BA		    mov rdx, offset String13
+	   0000000000000171 R
+ 000001C0  E8 00000000 E	    call WriteString
+ 000001C5  E8 00000000 E	    call crlf
+ 000001CA  48/ BA		    mov rdx, offset String14
+	   000000000000017E R
+ 000001D4  E8 00000000 E	    call WriteString
+ 000001D9  E8 00000000 E	    call crlf
+ 000001DE  48/ C7 C0		    mov rax, 0
+	   00000000
+ 000001E5  E8 00000000 E	    call ReadInt64
+
+ 000001EA  48/ 83 F8 01		    cmp rax, 1
+ 000001EE  74 0C		    je Margherita
+ 000001F0  48/ 83 F8 02		    cmp rax, 2
+ 000001F4  74 0F		    je Pepperoni
+ 000001F6  48/ 83 F8 03		    cmp rax, 3
+ 000001FA  74 12		    je VeggieSupreme
+
+ 000001FC			Margherita:
+				    ; Calculate the cost of Margherita
+ 000001FC  48/ C7 C0		    mov rax, 600 ; Base cost
+	   00000258
+ 00000203  EB 12		    jmp PizzaSizeSelection
+
+ 00000205			Pepperoni:
+				    ; Calculate the cost of Pepperoni
+ 00000205  48/ C7 C0		    mov rax, 600 ; Base cost
+	   00000258
+ 0000020C  EB 09		    jmp PizzaSizeSelection
+
+ 0000020E			VeggieSupreme:
+				    ; Calculate the cost of Veggie Supreme
+ 0000020E  48/ C7 C0		    mov rax, 600 ; Base cost
+	   00000258
+ 00000215  EB 00		    jmp PizzaSizeSelection
+
+ 00000217			PizzaSizeSelection:
+ 00000217  48/ BA		    mov rdx, offset PizzaSizePrompt
+	   0000000000000190 R
+ 00000221  E8 00000000 E	    call WriteString
+ 00000226  E8 00000000 E	    call crlf
+ 0000022B  48/ BA		    mov rdx, offset String15
+	   00000000000001A3 R
+ 00000235  E8 00000000 E	    call WriteString
+ 0000023A  E8 00000000 E	    call crlf
+ 0000023F  48/ BA		    mov rdx, offset String16
+	   00000000000001AC R
+ 00000249  E8 00000000 E	    call WriteString
+ 0000024E  E8 00000000 E	    call crlf
+ 00000253  48/ BA		    mov rdx, offset String17
+	   00000000000001B6 R
+ 0000025D  E8 00000000 E	    call WriteString
+ 00000262  E8 00000000 E	    call crlf
+ 00000267  48/ C7 C0		    mov rax, 0
+	   00000000
+ 0000026E  E8 00000000 E	    call ReadInt64
+
+ 00000273  48/ 83 F8 01		    cmp rax, 1
+ 00000277  74 0C		    je Small
+ 00000279  48/ 83 F8 02		    cmp rax, 2
+ 0000027D  74 0E		    je Medium
+ 0000027F  48/ 83 F8 03		    cmp rax, 3
+ 00000283  74 10		    je Large
+
+ 00000285			Small:
+				    ; Calculate the cost for a Small pizza
+				    ; (you can adjust the cost accordingly)
+ 00000285  48/ 05		    add rax, 600
+	   00000258
+ 0000028B  EB 10		    jmp CalculateBill
+
+ 0000028D			Medium:
+				    ; Calculate the cost for a Medium pizza
+				    ; (you can adjust the cost accordingly)
+ 0000028D  48/ 05		    add rax, 1000
+	   000003E8
+ 00000293  EB 08		    jmp CalculateBill
+
+ 00000295			Large:
+				    ; Calculate the cost for a Large pizza
+				    ; (you can adjust the cost accordingly)
+ 00000295  48/ 05		    add rax, 1600
+	   00000640
+ 0000029B  EB 00		    jmp CalculateBill
+
+ 0000029D			CalculateBill:
+ 0000029D  48/ 89 05		    mov quan, rax
+	   00000397 R
+ 000002A4  48/ BA		    mov rdx, offset StringQuantity
+	   00000000000002B7 R
+ 000002AE  E8 00000000 E	    call WriteString
+ 000002B3  E8 00000000 E	    call crlf
+ 000002B8  E8 00000000 E	    call readint64
+ 000002BD  48/ 8B D8		    mov rbx, rax
+
+ 000002C0  48/ 8B 05		    mov rax, quan
+	   00000397 R
+ 000002C7  48/ 0F AF C3		    imul rax, rbx ; Multiply quantity with flavor and size cost
+ 000002CB  48/ 89 05		    mov res, rax
+	   0000039F R
+
+ 000002D2  E9 00000304		    jmp Bill
+
+
+ 000002D7			    Burgers:
+
+ 000002D7  48/ C7 C0		     mov rax, 150
+	   00000096
+				    
+				    ; Prompt for flavor
+ 000002DE  48/ BA		    mov rdx, offset StringFlavorBPrompt
+	   00000000000001BF R
+ 000002E8  E8 00000000 E	    call WriteString
+ 000002ED  E8 00000000 E	    call crlf
+ 000002F2  48/ BA		    mov rdx, offset Stringc
+	   00000000000001CE R
+ 000002FC  E8 00000000 E	    call WriteString
+ 00000301  E8 00000000 E	    call crlf
+ 00000306  48/ BA		    mov rdx, offset Stringb
+	   00000000000001D8 R
+ 00000310  E8 00000000 E	    call WriteString
+ 00000315  E8 00000000 E	    call crlf
+ 0000031A  48/ C7 C0		    mov rax, 0
+	   00000000
+ 00000321  E8 00000000 E	    call ReadInt64
+
+				    ; Process flavor choice (you can add more flavors)
+ 00000326  48/ 83 F8 01		    cmp rax, 1
+ 0000032A  74 06		    je CheeseBurger
+ 0000032C  48/ 83 F8 02		    cmp rax, 2
+ 00000330  74 08		    je ZingerBurger
+				    ; add more flavor comparisons as needed
+
+ 00000332			CheeseBurger:
+ 00000332  48/ 05		    add rax, 250   ; add cost for CheeseBurger
+	   000000FA
+ 00000338  EB 08		    jmp SizeSelection
+
+ 0000033A			ZingerBurger:
+ 0000033A  48/ 05		    add rax, 350   ; add cost for ZingerBurger
+	   0000015E
+ 00000340  EB 00		    jmp SizeSelection
+
+				; Add more flavors with corresponding cost adjustments
+
+ 00000342			SizeSelection:
+				    ; Prompt for size
+ 00000342  48/ BA		    mov rdx, offset StringSizeBPrompt
+	   00000000000001DF R
+ 0000034C  E8 00000000 E	    call WriteString
+ 00000351  E8 00000000 E	    call crlf
+ 00000356  48/ BA		    mov rdx, offset Stringreg
+	   00000000000001EC R
+ 00000360  E8 00000000 E	    call WriteString
+ 00000365  E8 00000000 E	    call crlf
+ 0000036A  48/ BA		    mov rdx, offset Stringlar
+	   00000000000001F7 R
+ 00000374  E8 00000000 E	    call WriteString
+ 00000379  E8 00000000 E	    call crlf
+ 0000037E  48/ C7 C0		    mov rax, 0
+	   00000000
+ 00000385  E8 00000000 E	    call ReadInt64
+
+				    ; Process size choice
+ 0000038A  48/ 83 F8 01		    cmp rax, 1
+ 0000038E  74 06		    je RegularSize
+ 00000390  48/ 83 F8 02		    cmp rax, 2
+ 00000394  74 02		    je LargeSize
+
+ 00000396			RegularSize:
+				    ; No cost adjustment for regular size
+ 00000396  EB 04		    jmp CalculateBillB
+
+ 00000398			LargeSize:
+ 00000398  48/ 83 C0 64		    add rax, 100   ; add cost for Large size
+
+ 0000039C			CalculateBillB:
+ 0000039C  48/ 89 05		    mov quan, rax
+	   00000397 R
+ 000003A3  48/ BA		    mov rdx, offset StringQuantity
+	   00000000000002B7 R
+ 000003AD  E8 00000000 E	    call WriteString
+ 000003B2  E8 00000000 E	    call crlf
+ 000003B7  E8 00000000 E	    call readint64
+ 000003BC  48/ 8B D8		    mov rbx, rax
+
+ 000003BF  48/ 8B 05		    mov rax, quan
+	   00000397 R
+ 000003C6  48/ 0F AF C3		    imul rax, rbx ; Multiply quantity with flavor and size cost
+ 000003CA  48/ 89 05		    mov res, rax
+	   0000039F R
+ 000003D1  E9 00000205		    jmp Bill
+
+ 000003D6			    Sandwiches:
+ 000003D6  48/ BA		    mov rdx, offset StringSandwichFlavors
+	   0000000000000245 R
+ 000003E0  E8 00000000 E	    call WriteString
+ 000003E5  E8 00000000 E	    call crlf
+
+				    ; Display flavor options
+				    ; Add more flavors as needed
+				  
+
+ 000003EA  48/ C7 C0		    mov rax, 0
+	   00000000
+ 000003F1  E8 00000000 E	    call ReadInt64
+ 000003F6  48/ 83 F8 01		    cmp rax, 1
+ 000003FA  74 05		    je SandwichSizeSelection
+				    ; Add more flavor handling logic as needed
+
+ 000003FC  E9 000001DA		    jmp Bill
+
+ 00000401			    SandwichSizeSelection:
+ 00000401  48/ BA		    mov rdx, offset StringSandwichSizes
+	   0000000000000257 R
+ 0000040B  E8 00000000 E	    call WriteString
+ 00000410  E8 00000000 E	    call crlf
+				    ; Display size options
+ 00000415  48/ BA		    mov rdx, offset StringSandwichSmall
+	   0000000000000271 R
+ 0000041F  E8 00000000 E	    call WriteString
+ 00000424  E8 00000000 E	    call crlf
+ 00000429  48/ BA		    mov rdx, offset StringSandwichMedium
+	   000000000000027A R
+ 00000433  E8 00000000 E	    call WriteString
+ 00000438  E8 00000000 E	    call crlf
+ 0000043D  48/ BA		    mov rdx, offset StringSandwichLarge
+	   0000000000000284 R
+ 00000447  E8 00000000 E	    call WriteString
+ 0000044C  E8 00000000 E	    call crlf
+
+ 00000451  48/ C7 C0		    mov rax, 0
+	   00000000
+ 00000458  E8 00000000 E	    call ReadInt64
+ 0000045D  48/ 83 F8 01		    cmp rax, 1
+ 00000461  74 0E		    je SmallSandwich
+ 00000463  48/ 83 F8 02		    cmp rax, 2
+ 00000467  74 11		    je MediumSandwich
+ 00000469  48/ 83 F8 03		    cmp rax, 3
+ 0000046D  74 14		    je LargeSandwich
+ 0000046F  EB 1B		    jmp SandwichSizeInvalid
+
+ 00000471			    SmallSandwich:
+ 00000471  48/ C7 C0		    mov rax, 120  ; Price for small sandwich
+	   00000078
+ 00000478  EB 2B		    jmp CalculateBillS
+
+ 0000047A			MediumSandwich:
+ 0000047A  48/ C7 C0		    mov rax, 150  ; Price for medium sandwich
+	   00000096
+ 00000481  EB 22		    jmp CalculateBillS
+
+ 00000483			LargeSandwich:
+ 00000483  48/ C7 C0		    mov rax, 180  ; Price for large sandwich
+	   000000B4
+ 0000048A  EB 19		    jmp CalculateBillS
+
+ 0000048C			    SandwichSizeInvalid:
+ 0000048C  48/ BA		    mov rdx, offset StringSandwichInvalidSize
+	   000000000000028D R
+ 00000496  E8 00000000 E	    call WriteString
+ 0000049B  E8 00000000 E	    call crlf
+ 000004A0  E9 FFFFFF5C		    jmp SandwichSizeSelection
+
+ 000004A5			    CalculateBillS:
+ 000004A5  48/ 89 05		    mov quan, rax
+	   00000397 R
+ 000004AC  48/ BA		    mov rdx, offset StringQuantity
+	   00000000000002B7 R
+ 000004B6  E8 00000000 E	    call WriteString
+ 000004BB  E8 00000000 E	    call crlf
+ 000004C0  E8 00000000 E	    call readint64
+ 000004C5  48/ 8B D8		    mov rbx, rax
+
+ 000004C8  48/ 8B 05		    mov rax, quan
+	   00000397 R
+ 000004CF  48/ 0F AF C3		    imul rax, rbx ; Multiply quantity with flavor and size cost
+ 000004D3  48/ 89 05		    mov res, rax
+	   0000039F R
+ 000004DA  E9 000000FC		    jmp Bill
+
+
+				   
+ 000004DF			    Biryani:
+ 000004DF  48/ C7 C0		    mov rax, 350
+	   0000015E
+				    
+				    ; Prompt for flavor
+ 000004E6  48/ BA		    mov rdx, offset StringFlavorBRPrompt
+	   0000000000000200 R
+ 000004F0  E8 00000000 E	    call WriteString
+ 000004F5  E8 00000000 E	    call crlf
+ 000004FA  48/ BA		    mov rdx, offset Stringch
+	   000000000000020F R
+ 00000504  E8 00000000 E	    call WriteString
+ 00000509  E8 00000000 E	    call crlf
+ 0000050E  48/ BA		    mov rdx, offset Stringsi
+	   000000000000021A R
+ 00000518  E8 00000000 E	    call WriteString
+ 0000051D  E8 00000000 E	    call crlf
+ 00000522  48/ C7 C0		    mov rax, 0
+	   00000000
+ 00000529  E8 00000000 E	    call ReadInt64
+
+				    ; Process flavor choice (you can add more flavors)
+ 0000052E  48/ 83 F8 01		    cmp rax, 1
+ 00000532  74 06		    je Chicken
+ 00000534  48/ 83 F8 02		    cmp rax, 2
+ 00000538  74 08		    je Simple
+				    ; add more flavor comparisons as needed
+
+ 0000053A			Chicken:
+ 0000053A  48/ 05		    add rax, 400   ; add cost for CheeseBurger
+	   00000190
+ 00000540  EB 08		    jmp SizeSelectionB
+
+ 00000542			Simple:
+ 00000542  48/ 05		    add rax, 300   ; add cost for BBQBurger
+	   0000012C
+ 00000548  EB 00		    jmp SizeSelectionB
+
+				; Add more flavors with corresponding cost adjustments
+
+ 0000054A			SizeSelectionB:
+				    ; Prompt for size
+ 0000054A  48/ BA		    mov rdx, offset StringSizeBRPrompt
+	   0000000000000224 R
+ 00000554  E8 00000000 E	    call WriteString
+ 00000559  E8 00000000 E	    call crlf
+ 0000055E  48/ BA		    mov rdx, offset Stringsin
+	   0000000000000231 R
+ 00000568  E8 00000000 E	    call WriteString
+ 0000056D  E8 00000000 E	    call crlf
+ 00000572  48/ BA		    mov rdx, offset Stringdou
+	   000000000000023B R
+ 0000057C  E8 00000000 E	    call WriteString
+ 00000581  E8 00000000 E	    call crlf
+ 00000586  48/ C7 C0		    mov rax, 0
+	   00000000
+ 0000058D  E8 00000000 E	    call ReadInt64
+
+				    ; Process size choice
+ 00000592  48/ 83 F8 01		    cmp rax, 1
+ 00000596  74 06		    je singleSize
+ 00000598  48/ 83 F8 02		    cmp rax, 2
+ 0000059C  74 02		    je doubleSize
+
+ 0000059E			singleSize:
+				    ; No cost adjustment for regular size
+ 0000059E  EB 04		    jmp CalculateBillBR
+
+ 000005A0			doubleSize:
+ 000005A0  48/ 83 C0 32		    add rax, 50   ; add cost for Large size
+
+ 000005A4			CalculateBillBR:
+ 000005A4  48/ 89 05		    mov quan, rax
+	   00000397 R
+ 000005AB  48/ BA		    mov rdx, offset StringQuantity
+	   00000000000002B7 R
+ 000005B5  E8 00000000 E	    call WriteString
+ 000005BA  E8 00000000 E	    call crlf
+ 000005BF  E8 00000000 E	    call readint64
+ 000005C4  48/ 8B D8		    mov rbx, rax
+
+ 000005C7  48/ 8B 05		    mov rax, quan
+	   00000397 R
+ 000005CE  48/ 0F AF C3		    imul rax, rbx ; Multiply quantity with flavor and size cost
+ 000005D2  48/ 89 05		    mov res, rax
+	   0000039F R
+ 000005D9  EB 00		    jmp Bill
+
+
+ 000005DB			    Bill:
+ 000005DB  E8 00000000 E	    call crlf
+ 000005E0  48/ BA		    mov rdx, offset String27
+	   00000000000002C7 R
+ 000005EA  E8 00000000 E	    call WriteString
+ 000005EF  E8 00000000 E	    call crlf
+ 000005F4  48/ BA		    mov rdx, offset StringBill
+	   00000000000002EF R
+ 000005FE  E8 00000000 E	    call WriteString
+ 00000603  48/ 8B 05		    mov rax, res
+	   0000039F R
+ 0000060A  E8 00000000 E	    call WriteInt64
+ 0000060F  E8 00000000 E	    call crlf
+ 00000614  48/ BA		    mov rdx, offset StringTime
+	   0000000000000304 R
+ 0000061E  E8 00000000 E	    call WriteString
+ 00000623  E8 00000000 E	    call crlf
+
+
+ 00000628  EB 00		    jmp optionsloop
+
+ 0000062A			    optionsloop:
+				                                  ; Display Thirty-Three String
+ 0000062A  E8 00000000 E	    call crlf
+ 0000062F  48/ BA		    mov rdx, offset StringRecalculate           ;
+	   0000000000000352 R
+ 00000639  E8 00000000 E	    call WriteString
+				    ; Display Thirty-Three String
+ 0000063E  E8 00000000 E	    call crlf
+ 00000643  48/ BA		    mov rdx, offset StringExit
+	   0000000000000370 R
+ 0000064D  E8 00000000 E	    call WriteString
+
+				    ; Read user's choice
+ 00000652  48/ C7 C0		    MOV RAX, 0
+	   00000000
+ 00000659  E8 00000000 E	    call ReadInt64
+ 0000065E  48/ 89 05		    mov num, rax
+	   0000038F R
+				    ; Process user's choice
+ 00000665  48/ 83 F8 01		    cmp rax, 1
+ 00000669  74 25		    je recalculate
+ 0000066B  48/ 83 F8 02		    cmp rax, 2
+ 0000066F  74 3A		    je exit_program
+ 00000671  48/ 3B 05		    cmp rax,num
+	   0000038F R
+ 00000678  74 00		    je invalid1
+
+ 0000067A			    invalid1:
+ 0000067A  48/ BA		    mov rdx, offset StringInvalid
+	   00000000000000E5 R
+ 00000684  E8 00000000 E	    call WriteString
+ 00000689  E8 00000000 E	    call crlf
+ 0000068E  EB 9A		    jmp optionsloop
+ 00000690			recalculate:
+ 00000690  E9 FFFFFA5E		    jmp main2
+
+ 00000695			    invalid_login:
+ 00000695  48/ BA		    mov rdx, offset InvalidPasswordPrompt
+	   000000000000004F R
+ 0000069F  E8 00000000 E	    call WriteString
+ 000006A4  E8 00000000 E	    call crlf
+ 000006A9  EB 16		    jmp Quit
+ 000006AB			    exit_program:
+ 000006AB  48/ BA		    mov rdx, offset Thanks
+	   000000000000032F R
+ 000006B5  E8 00000000 E	    call WriteString
+ 000006BA  E8 00000000 E	    call crlf
+ 000006BF  EB 00		    jmp Quit
+ 000006C1			    Quit:
+ 000006C1  E8 00000000 E	    call ExitProcess
+ 000006C6			main endp
+				end
+Microsoft (R) Macro Assembler (x64) Version 14.37.32825.0   01/24/24 08:24:14
+AddTwoSum_64.asm					     Symbols 2 - 1
+
+
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+Crlf . . . . . . . . . . . . . .	P 	 00000000 Length= 00000000 External
+ExitProcess  . . . . . . . . . .	P 	 00000000 Length= 00000000 External
+ReadInt64  . . . . . . . . . . .	P 	 00000000 Length= 00000000 External
+ReadString . . . . . . . . . . .	P 	 00000000 Length= 00000000 External
+WriteInt64 . . . . . . . . . . .	P 	 00000000 Length= 00000000 External
+WriteString  . . . . . . . . . .	P 	 00000000 Length= 00000000 External
+main . . . . . . . . . . . . . .	P 	 00000000 _TEXT	Length= 000006C6 Public
+  Successful . . . . . . . . . .	L 	 00000054 _TEXT	
+  main1  . . . . . . . . . . . .	L 	 0000006D _TEXT	
+  Invalid  . . . . . . . . . . .	L 	 000000DA _TEXT	
+  main2  . . . . . . . . . . . .	L 	 000000F3 _TEXT	
+  Pizzas . . . . . . . . . . . .	L 	 00000187 _TEXT	
+  Margherita . . . . . . . . . .	L 	 000001FC _TEXT	
+  Pepperoni  . . . . . . . . . .	L 	 00000205 _TEXT	
+  VeggieSupreme  . . . . . . . .	L 	 0000020E _TEXT	
+  PizzaSizeSelection . . . . . .	L 	 00000217 _TEXT	
+  Small  . . . . . . . . . . . .	L 	 00000285 _TEXT	
+  Medium . . . . . . . . . . . .	L 	 0000028D _TEXT	
+  Large  . . . . . . . . . . . .	L 	 00000295 _TEXT	
+  CalculateBill  . . . . . . . .	L 	 0000029D _TEXT	
+  Burgers  . . . . . . . . . . .	L 	 000002D7 _TEXT	
+  CheeseBurger . . . . . . . . .	L 	 00000332 _TEXT	
+  ZingerBurger . . . . . . . . .	L 	 0000033A _TEXT	
+  SizeSelection  . . . . . . . .	L 	 00000342 _TEXT	
+  RegularSize  . . . . . . . . .	L 	 00000396 _TEXT	
+  LargeSize  . . . . . . . . . .	L 	 00000398 _TEXT	
+  CalculateBillB . . . . . . . .	L 	 0000039C _TEXT	
+  Sandwiches . . . . . . . . . .	L 	 000003D6 _TEXT	
+  SandwichSizeSelection  . . . .	L 	 00000401 _TEXT	
+  SmallSandwich  . . . . . . . .	L 	 00000471 _TEXT	
+  MediumSandwich . . . . . . . .	L 	 0000047A _TEXT	
+  LargeSandwich  . . . . . . . .	L 	 00000483 _TEXT	
+  SandwichSizeInvalid  . . . . .	L 	 0000048C _TEXT	
+  CalculateBillS . . . . . . . .	L 	 000004A5 _TEXT	
+  Biryani  . . . . . . . . . . .	L 	 000004DF _TEXT	
+  Chicken  . . . . . . . . . . .	L 	 0000053A _TEXT	
+  Simple . . . . . . . . . . . .	L 	 00000542 _TEXT	
+  SizeSelectionB . . . . . . . .	L 	 0000054A _TEXT	
+  singleSize . . . . . . . . . .	L 	 0000059E _TEXT	
+  doubleSize . . . . . . . . . .	L 	 000005A0 _TEXT	
+  CalculateBillBR  . . . . . . .	L 	 000005A4 _TEXT	
+  Bill . . . . . . . . . . . . .	L 	 000005DB _TEXT	
+  optionsloop  . . . . . . . . .	L 	 0000062A _TEXT	
+  invalid1 . . . . . . . . . . .	L 	 0000067A _TEXT	
+  recalculate  . . . . . . . . .	L 	 00000690 _TEXT	
+  invalid_login  . . . . . . . .	L 	 00000695 _TEXT	
+  exit_program . . . . . . . . .	L 	 000006AB _TEXT	
+  Quit . . . . . . . . . . . . .	L 	 000006C1 _TEXT	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+InvalidPasswordPrompt  . . . . .	Byte	 0000004F _DATA	
+PasswordPrompt . . . . . . . . .	Byte	 00000023 _DATA	
+PizzaFlavorPrompt  . . . . . . .	Byte	 0000014E _DATA	
+PizzaSizePrompt  . . . . . . . .	Byte	 00000190 _DATA	
+String10 . . . . . . . . . . . .	Byte	 00000143 _DATA	
+String12 . . . . . . . . . . . .	Byte	 00000163 _DATA	
+String13 . . . . . . . . . . . .	Byte	 00000171 _DATA	
+String14 . . . . . . . . . . . .	Byte	 0000017E _DATA	
+String15 . . . . . . . . . . . .	Byte	 000001A3 _DATA	
+String16 . . . . . . . . . . . .	Byte	 000001AC _DATA	
+String17 . . . . . . . . . . . .	Byte	 000001B6 _DATA	
+String1  . . . . . . . . . . . .	Byte	 0000007C _DATA	
+String27 . . . . . . . . . . . .	Byte	 000002C7 _DATA	
+String2  . . . . . . . . . . . .	Byte	 000000B9 _DATA	
+String3  . . . . . . . . . . . .	Byte	 000000D1 _DATA	
+String6  . . . . . . . . . . . .	Byte	 00000102 _DATA	
+String7  . . . . . . . . . . . .	Byte	 00000120 _DATA	
+String8  . . . . . . . . . . . .	Byte	 0000012A _DATA	
+String9  . . . . . . . . . . . .	Byte	 00000135 _DATA	
+StringBill . . . . . . . . . . .	Byte	 000002EF _DATA	
+StringExit . . . . . . . . . . .	Byte	 00000370 _DATA	
+StringFlavorBPrompt  . . . . . .	Byte	 000001BF _DATA	
+StringFlavorBRPrompt . . . . . .	Byte	 00000200 _DATA	
+StringInvalid  . . . . . . . . .	Byte	 000000E5 _DATA	
+StringQuantity . . . . . . . . .	Byte	 000002B7 _DATA	
+StringRecalculate  . . . . . . .	Byte	 00000352 _DATA	
+StringSandwichFlavors  . . . . .	Byte	 00000245 _DATA	
+StringSandwichInvalidSize  . . .	Byte	 0000028D _DATA	
+StringSandwichLarge  . . . . . .	Byte	 00000284 _DATA	
+StringSandwichMedium . . . . . .	Byte	 0000027A _DATA	
+StringSandwichSizes  . . . . . .	Byte	 00000257 _DATA	
+StringSandwichSmall  . . . . . .	Byte	 00000271 _DATA	
+StringSizeBPrompt  . . . . . . .	Byte	 000001DF _DATA	
+StringSizeBRPrompt . . . . . . .	Byte	 00000224 _DATA	
+StringTime . . . . . . . . . . .	Byte	 00000304 _DATA	
+Stringb  . . . . . . . . . . . .	Byte	 000001D8 _DATA	
+Stringch . . . . . . . . . . . .	Byte	 0000020F _DATA	
+Stringc  . . . . . . . . . . . .	Byte	 000001CE _DATA	
+Stringdou  . . . . . . . . . . .	Byte	 0000023B _DATA	
+Stringlar  . . . . . . . . . . .	Byte	 000001F7 _DATA	
+Stringreg  . . . . . . . . . . .	Byte	 000001EC _DATA	
+Stringsin  . . . . . . . . . . .	Byte	 00000231 _DATA	
+Stringsi . . . . . . . . . . . .	Byte	 0000021A _DATA	
+SuccessPrompt  . . . . . . . . .	Byte	 0000006A _DATA	
+Thanks . . . . . . . . . . . . .	Byte	 0000032F _DATA	
+UserNamePrompt . . . . . . . . .	Byte	 00000000 _DATA	
+num  . . . . . . . . . . . . . .	QWord	 0000038F _DATA	
+pass . . . . . . . . . . . . . .	QWord	 00000387 _DATA	
+quan . . . . . . . . . . . . . .	QWord	 00000397 _DATA	
+res  . . . . . . . . . . . . . .	QWord	 0000039F _DATA	
+
+	   0 Warnings
+	   0 Errors
